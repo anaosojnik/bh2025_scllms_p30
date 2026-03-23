@@ -33,4 +33,6 @@ pipelines/model/
 
 *Zone.Identifier
 docker
+arc
+data/*
 
