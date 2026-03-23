@@ -3,4 +3,4 @@
 	url = https://github.com/BoevaLab/CancerFoundation
 [submodule "external/scgpt"]
 	path = external/scgpt
-	url = https://github.com/BoevaLab/CancerFoundation
+	url = https://github.com/bowang-lab/scGPT
