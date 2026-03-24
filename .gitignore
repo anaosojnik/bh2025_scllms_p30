@@ -35,4 +35,6 @@ pipelines/model/
 docker
 arc
 data/*
+outputs/cancerf/*
+outputs/scgpt/*
 

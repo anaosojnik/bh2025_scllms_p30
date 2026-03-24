@@ -1,5 +1,7 @@
 nextflow.enable.dsl = 2
 
+include { parseAsCmdArgs } from '../../modules/utils.nf'
+
 // params.input_dir  = "./data"
 // params.output_dir = "./results"
 // params.threshold  = 0.05
@@ -8,36 +10,39 @@ nextflow.enable.dsl = 2
 //     .fromPath("${params.input_dir}/*.csv")
 //     .set { input_files }
 
-process RUN_PYTHON_ANALYSIS {
+
+process EMBED {
     input:
     val cliArgs
 
     output:
-    tuple path("${params.workflow.umap_png}"), path("${params.workflow.output_h5ad}")
+    path("${params.workflow.output_h5ad}"), emit: embeddings
+    path("${params.workflow.umap_png ?: ''}"), optional: true, emit: umap
 
     // Convert map to CLI arguments
     // def cliArgs = config.collect { k, v -> "--${k} ${v}" }.join(' ')
 
     script:
     """
+    python ${params.scriptsDir}/embed_and_umap.py ${cliArgs}
+    """
+
+    stub:
+    """
     pwd
-    echo ${launchDir}
-    echo ${projectDir}
-    echo ${moduleDir}
+    #echo ${launchDir}
+    #echo ${projectDir}
+    #echo ${moduleDir}
     #export PYTHONPATH=\$PWD/bin:\$PYTHONPATH
-    echo \$PATH
-    export PATH=${projectDir}/bin:\$PATH
-    #python -c 'import sys; print(sys.path)'
-    #echo 'test' > ${params.workflow.output_h5ad}
+    #echo \$PATH
+    #export PATH=${projectDir}/bin:\$PATH
+    ls ${projectDir}/bin
+    echo \$PYTHONPATH
+    python -c 'import sys; print(sys.path)'
+    #python ${projectDir}/bin/${params.model}/test.py
+    echo 'test' > ${params.workflow.output_h5ad}
     #echo 'test' > ${params.workflow.umap_png}
-    #python ${projectDir}/bin/${params.model}/test.py --output results.csv --params ${moduleDir}/config.yaml
-    python ${params.scriptsDir}/embed_and_umap.py ${cliArgs} #\
-    #--input ${params.workflow.input} \
-    #--output_h5ad ${params.workflow.output_h5ad} \
-    #--model_dir ${params.workflow.model_dir} \
-    #--batch_key ${params.workflow.batch_key} \
-    #--bio_key ${params.workflow.bio_key} \
-    #--umap_png ${params.workflow.umap_png}
+    #python ${projectDir}/bin/${params.model}/test.py --output results.csv --params ${moduleDir}/config.yaml    
     """
 }
 
@@ -51,11 +56,12 @@ workflow CANCERF {
     // println("Workflow parameters loaded from file:")
     // println(config)
 
-    def cliArgs = params.workflow.collect { k, v -> "--${k} ${v}" }.join(' ')
-    println(cliArgs)
-
     // Run workflow
-    results = RUN_PYTHON_ANALYSIS(cliArgs)
+    cliArgs = parseAsCmdArgs(params.workflow)
+    println(cliArgs)
+    
+    result = EMBED(cliArgs)
+    results = result.embeddings.combine(result.umap.ifEmpty([null]))
 
     emit:
     results = results
