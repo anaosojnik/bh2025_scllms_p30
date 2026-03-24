@@ -9,6 +9,7 @@ IMAGE_TAG := $(MODEL)$(MODEL_SUFFIX):latest
 DOCKERFILE := containers/$(MODEL)/$(MODEL)$(MODEL_SUFFIX).Dockerfile
 PROV := ## empty or true
 NXF_PROFILE := $(if $(PROV),"with_prov","")$(MODEL)$(if $(CPU),_cpu,)
+TASK := inference
 
 # File parameters
 DATASET = test
@@ -104,7 +105,7 @@ image: $(DOCKERFILE) ## Build the Docker image
 
 ### RUN
 run: download-data download-model ## Run the Nextflow pipeline
-	@nextflow run . -profile $(NXF_PROFILE)
+	@nextflow run . -profile $(NXF_PROFILE) --task $(TASK)
 
 # scgpt: download-data download-model ## Run the Nextflow pipeline
 # 	@nextflow run . -profile scgpt
@@ -116,10 +117,10 @@ run: download-data download-model ## Run the Nextflow pipeline
 # 	@nextflow run . -profile cancerf_cpu
 
 cancerf-cpu-test: #download-data download-model ## Run the Nextflow pipeline
-	@nextflow run . -profile cancerf_cpu -stub-run
+	@nextflow run . -profile cancerf_cpu --task $(TASK) -stub-run
 
 test: ## Run with test parameters
-	@nextflow run . -profile $(NXF_PROFILE) -stub-run
+	@nextflow run . -profile $(NXF_PROFILE) --task $(TASK) -stub-run
 
 
 ### MAINTENANCE

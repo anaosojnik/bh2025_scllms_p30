@@ -1,5 +1,7 @@
 nextflow.enable.dsl = 2
 
+include { parseAsCmdArgs } from '../../modules/utils.nf'
+
 // params.input_dir  = "./data"
 // params.output_dir = "./results"
 // params.threshold  = 0.05
@@ -8,35 +10,79 @@ nextflow.enable.dsl = 2
 //     .fromPath("${params.input_dir}/*.csv")
 //     .set { input_files }
 
-process RUN_PYTHON_ANALYSIS {
+process INFERENCE {
     input:
-    val config
+    val cliArgs
 
     output:
-    tuple path("${config.umap_png}"), path("${config.output_h5ad}")
+    path "*"
 
     script:
     """
-    pwd
-    echo ${launchDir}
-    echo ${projectDir}
-    echo ${moduleDir}
-    python ${projectDir}/bin/test.py --output results.csv --params ${moduleDir}/config.yaml
+    python ${params.scriptsDir}/inference_cell_types.py ${cliArgs}
+    """
+
+    stub:
+    """
+    echo 'test' > out.txt
+    """
+}
+
+process FINETUNE {
+    input:
+    val cliArgs
+
+    output:
+    path "*"
+
+    script:
+    """
+    python ${params.scriptsDir}/fine_tuning_cell_types.py ${cliArgs}
+    """
+
+    stub:
+    """
+    echo 'test' > out.txt
+    """
+}
+
+process FINETUNE_INTEGRATION {
+    input:
+    val cliArgs
+
+    output:
+    path "*"
+
+    script:
+    """
+    export PYTORCH_CUDA_ALLOC_CONF="max_split_size_mb:32"
+    python ${params.scriptsDir}/finetune_integration_nextflow_core.py ${cliArgs}
+    """
+
+    stub:
+    """
+    echo 'test' > out.txt
     """
 }
 
 workflow SCGPT {
 
     main:
-    // Import parameters
-    def configFile = "${moduleDir}/config.yaml"
-    def config = new groovy.yaml.YamlSlurper().parse(new File(configFile))
-
-    // println("Workflow parameters loaded from file:")
-    // println(config)
-
     // Run workflow
-    results = RUN_PYTHON_ANALYSIS(config)
+    scriptArgs = parseAsCmdArgs(params.workflow.script)
+    println(scriptArgs)
+
+    if (params.task == "inference") {
+        results = INFERENCE(scriptArgs)
+    }
+    else if (params.task == "finetune") {
+        results = FINETUNE(scriptArgs)
+    }
+    else if (params.task == "finetune_integration") {
+        results = FINETUNE_INTEGRATION(scriptArgs)
+    } else {
+        error("Task not implemented")
+    }
 
     emit:
     results = results

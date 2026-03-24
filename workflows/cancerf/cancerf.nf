@@ -60,8 +60,12 @@ workflow CANCERF {
     cliArgs = parseAsCmdArgs(params.workflow)
     println(cliArgs)
     
-    result = EMBED(cliArgs)
-    results = result.embeddings.combine(result.umap.ifEmpty([null]))
+    if (params.task == "inference") {
+        result = EMBED(cliArgs)
+        results = result.embeddings.combine(result.umap.ifEmpty([null]))
+    } else {
+        error("Task not implemented")
+    }
 
     emit:
     results = results
