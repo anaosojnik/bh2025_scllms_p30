@@ -1,0 +1,7 @@
+services:
+  cancerf-cpu:
+    build:
+      context: .
+      dockerfile: cancerf/cancerfoundation-cpu.Dockerfile
+    image: cancerf-cpu
+    container_name: cancerf-cpu
