@@ -60,7 +60,7 @@ workflow CANCERF {
     cliArgs = parseAsCmdArgs(params.workflow)
     println(cliArgs)
     
-    if (params.task == "inference") {
+    if (params.task == "embed") {
         result = EMBED(cliArgs)
         results = result.embeddings.combine(result.umap.ifEmpty([null]))
     } else {

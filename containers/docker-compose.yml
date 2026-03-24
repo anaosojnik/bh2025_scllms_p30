@@ -19,3 +19,10 @@ services:
       dockerfile: scgpt/scgpt.Dockerfile
     image: scgpt
     container_name: scgpt
+
+  scgpt-cpu:
+    build:
+      context: .
+      dockerfile: cancerf/cancerfoundation-cpu.Dockerfile
+    image: cancerf-cpu
+    container_name: scgpt-cpu

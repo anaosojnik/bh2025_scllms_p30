@@ -105,7 +105,7 @@ image: $(DOCKERFILE) ## Build the Docker image
 
 ### RUN
 run: download-data download-model ## Run the Nextflow pipeline
-	@nextflow run . -profile $(NXF_PROFILE) --task $(TASK)
+	@nextflow run . --model $(MODEL) --task $(TASK) $(if $(CPU),,--gpu true)
 
 # scgpt: download-data download-model ## Run the Nextflow pipeline
 # 	@nextflow run . -profile scgpt
@@ -117,10 +117,10 @@ run: download-data download-model ## Run the Nextflow pipeline
 # 	@nextflow run . -profile cancerf_cpu
 
 cancerf-cpu-test: #download-data download-model ## Run the Nextflow pipeline
-	@nextflow run . -profile cancerf_cpu --task $(TASK) -stub-run
+	@nextflow run . --model $(MODEL) --task $(TASK) $(if $(CPU),,--gpu true) -stub-run
 
 test: ## Run with test parameters
-	@nextflow run . -profile $(NXF_PROFILE) --task $(TASK) -stub-run
+	@nextflow run . --model $(MODEL) --task $(TASK) $(if $(CPU),,--gpu true) -stub-run
 
 
 ### MAINTENANCE
