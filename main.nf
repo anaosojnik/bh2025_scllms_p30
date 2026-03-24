@@ -7,6 +7,11 @@ workflow {
 
     main:
 
+    // Check if model defined
+    if( !params.model ) {
+        error("Parameter --model is required. Re-run workflow with a model-specific profile.")
+    }
+
     // Check if output directory exists, otherwise error
     def outDir = new File(params.outputDir)
     if (!outDir.exists()) {
@@ -25,7 +30,8 @@ workflow {
 
     // results.flatten().view { v -> "${v}  (${v?.getClass()})" }
 
-    results = results.flatten().filter { it != null }
+    // Remove optional results, which are null
+    results = results.flatten().filter { it != null } 
 
     println("results:")
     results.view { "${it}" }
