@@ -1,8 +1,5 @@
 nextflow.enable.dsl = 2
 
-params.scriptsDir = "${projectDir}/bin/${params.model}"
-params.outputDir = params.outputDir ?: "${projectDir}/outputs/${params.model}"
-
 include { CANCERF } from './workflows/cancerf/cancerf.nf'
 include { SCGPT } from './workflows/scgpt/scgpt.nf'
 
@@ -20,11 +17,17 @@ workflow {
     if (params.model == "cancerf") {
         results = CANCERF()
     }
-    if (params.model == "scgpt") {
+    else if (params.model == "scgpt") {
         results = SCGPT()
     }
 
     // View results
+
+    // results.flatten().view { v -> "${v}  (${v?.getClass()})" }
+
+    results = results.flatten().filter { it != null }
+
+    println("results:")
     results.view { "${it}" }
 
     publish:
@@ -33,9 +36,9 @@ workflow {
 
 output {
     results {
-        path "${params.model}/${params.resultsSubdir}"
+        path "${params.resultsSubdir}"
         index {
-            path "${params.model}/${params.resultsIndexSubdir}/index.csv"
+            path "${params.resultsIndexSubdir}/index.csv"
         }
     }
 }
