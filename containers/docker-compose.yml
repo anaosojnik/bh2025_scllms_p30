@@ -5,3 +5,17 @@ services:
       dockerfile: cancerf/cancerfoundation-cpu.Dockerfile
     image: cancerf-cpu
     container_name: cancerf-cpu
+
+  cancerf:
+    build:
+      context: .
+      dockerfile: cancerf/cancerfoundation.Dockerfile
+    image: cancerf
+    container_name: cancerf
+
+  scgpt:
+    build:
+      context: .
+      dockerfile: scgpt/scgpt.Dockerfile
+    image: scgpt
+    container_name: scgpt
