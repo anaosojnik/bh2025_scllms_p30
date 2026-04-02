@@ -2,11 +2,21 @@
 
 Monorepo layout for scGPT, Cancer Foundation, and Nextflow pipelines.
 
-## Structure
+## Structure [in progress]
 
-- external/scgpt: your fork of scGPT as a git submodule
-- external/cancerfoundation: your fork of Cancer Foundation as a git submodule
-- pipelines: Nextflow pipelines and configs
+- `main.nf`: core workflow script, which calls subworkflows, i.e. for each model there is a separate subworkflow script that gets called
+- `nextflow.config`: core Nextflow config, defines key input parameters and directory structure
+- `workflows`: Nextflow subworkflows split by model
+- `configs`: Nextflow configs split by model and by task
+- `modules`: shared groovy/Nextflow code, used by all workflows and subworkflows
+- `bin`: all Python code, split by model or whether is it shared between all models
+    - `shared`: added to PYTHONPATH for all models
+    - `cancerf`: added to PYTHONPATH only for cancerfoundation
+    - `scgpt`: added to PYTHONPATH only for scgpt
+- `outputs`: 
+- `external`: all external dependencies
+    - `scgpt`: original scGPT as a git submodule
+    - `cancerf`: original Cancer Foundation as a git submodule
 
 ## Setup
 
