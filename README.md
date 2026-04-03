@@ -40,9 +40,10 @@ Monorepo layout for scGPT, Cancer Foundation, and Nextflow pipelines.
     - `cancerf`: original Cancer Foundation repo as a git submodule
 - `assets`: any extra files that may be used by models, e.g. model weight files (see the file download section of the `Makefile`)
 - `containers`: files that specify container environments, i.e. Dockerfiles, split by model into subdirectories; `docker-compose.yml` contains instructions for building and running the different containers, but one can also build them with `make build <...args>` (see `Makefile`)
-- `data`: directory with all the **experimental datasets**, every dataset should be in its own subfolder
+- `data`: directory with all **experimental datasets**, every dataset should be in its own subfolder
 - `outputs`: directory where **results** are published according to the current configuration in `nextflow.config`; results are split by model in subdirectories
 - `.work`: Nextflow working directory with all run working files and outputs before some files are published to `outputs`
+- `.venv` (optional): Python virtual environment with `gdown` package, only needed if executing automatic data downloads
 
 ## Setup
 
@@ -50,7 +51,7 @@ Monorepo layout for scGPT, Cancer Foundation, and Nextflow pipelines.
 - Docker
 - Nextflow (version 25.10.4)
 - Python
-- gdown (Python package) in an actived Python virtual environment
+- gdown (Python package) in an actived Python virtual environment (`Makefile` assumes the virtual environment is at `.venv`)
 
 
 ### Instructions for setup and test workflow
