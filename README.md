@@ -2,6 +2,18 @@
 
 Monorepo layout for scGPT, Cancer Foundation, and Nextflow pipelines.
 
+## Table of contents
+
+- [Structure](#structure)
+- [Setup](#setup)
+    - [Prerequisites](#prerequisites)
+    - [Instructions for setup and test workflow](#instructions-for-setup-and-test-workflow)
+- [Running a customised workflow](#running-a-customised-workflow)
+    - [Custom workflow configuration](#custom-workflow-configuration)
+    - [Custom dataset](#custom-dataset)
+    - [Custom container](#custom-workflow-configuration)
+- [Generating provenance and RO-Crate metadata files](#generating-provenance-and-ro-crate-metadata-files)
+
 ## Structure
 
 - `Makefile`: contains commands for setup, running the workflow and cleaning up
@@ -63,7 +75,7 @@ To customise your workflow configuration, there are three types of configuration
 
 By definition in this repo, the types of parameters in each of these files are disjoint, i.e. do not overlap. However, it is worth noting that generally model-specific configuration overrides the core configuration, while task-specific configuration overrides the other two.
 
-You can also add your own configuration file in the `nextflow -c config/myconfig.config run .` command, which overrides all of the other configurations.
+You can also add your own configuration file in the `nextflow -c configs/<my-config>.config run .` command, which overrides all of the other configurations.
 
 > [!WARNING]
 > When changing the directory `outputDir`, where workflow outputs are published, make sure you do not change it via the `nextflow run . -output-dir` in command line. Change it instead in `nextflow.config` by defining both variables `outputDir` and `params.outputDir` as instructed in the comments in the config file. If these folders are defined after the `with_prov` profile is defined, then provenance may not work correctly.
@@ -78,7 +90,7 @@ You can also add your own configuration file in the `nextflow -c config/myconfig
     ```
     docker build -t <image-name>:latest -f <path/to/your/custom/Dockerfile> 
     ```
-3. Edit variable `process.container` in `nextflow.config`.
+3. Edit variable `process.container` in `nextflow.config`, or add to your custom configuration file `configs/<my-config>.config` and include your custom configuration file in your run (see [Custom workflow configuration](#custom-workflow-configuration)).
 4. Run your workflow as usual.
     ```
     nextflow run . --model <model> --task <task> --gpu <true/false> -profile <profiles-comma-separated>
@@ -104,6 +116,9 @@ You might need to specify the name of the docker image you use using the nextflo
 
 
 ## Generating provenance and RO-Crate metadata files
+
+> [!WARNING]
+> This is outdated. #TODO
 
 ### nf-prov plugin for Nextflow
 `nf-prov` is a Nexflow plugin that automatically generates Workflow **Run** RO-Crate (WRROC), this here means it automatically generates the `ro-crate-metadata.json` file in the standard [WRROC format](https://www.researchobject.org/workflow-run-crate/).
