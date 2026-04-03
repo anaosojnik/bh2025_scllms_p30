@@ -62,6 +62,24 @@ Monorepo layout for scGPT, Cancer Foundation, and Nextflow pipelines.
     make run MODEL=<model> TASK=<task> GPU=<true if gpu needed, otherwise delete this argument>
     ```
 
+## Running supported workflows
+### Models and tasks
+
+> [!WARNING]
+> This is #TODO
+
+This repo supports running the following models and tasks:
+| Model | Tasks |
+| --- | ----------- |
+| CancerFoundation[^1] | task1 |
+| scGPT[^2] | task1<br>task2 |
+
+#### References
+[^1]: CancerFoundation
+    #TODO add reference
+[^2]: scGPT
+    #TODO add reference
+
 
 ## Running a customised workflow
 
