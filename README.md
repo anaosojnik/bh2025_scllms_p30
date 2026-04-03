@@ -77,6 +77,8 @@ By definition in this repo, the types of parameters in each of these files are d
 
 You can also add your own configuration file in the `nextflow -c configs/<my-config>.config run .` command, which overrides all of the other configurations.
 
+File `nextflow.config` is heavily commented and provides further instructions on how to change certain workflow configuration parameters.
+
 > [!WARNING]
 > When changing the directory `outputDir`, where workflow outputs are published, make sure you do not change it via the `nextflow run . -output-dir` in command line. Change it instead in `nextflow.config` by defining both variables `outputDir` and `params.outputDir` as instructed in the comments in the config file. If these folders are defined after the `with_prov` profile is defined, then provenance may not work correctly.
 
