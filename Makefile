@@ -1,15 +1,18 @@
-.PHONY: help prereq run clean test clean-old image scgpt cancerf cancerf-cpu cancerf-cpu-test
+.PHONY: help #prereq run clean test clean-old image scgpt cancerf cancerf-cpu cancerf-cpu-test
 
 # Default parameters (can be overridden)
 # Run parameters
 MODEL := cancerf
-CPU := ## true or empty
-MODEL_SUFFIX := $(if $(CPU),-cpu,)
+TASK := embed
+GPU := ## true or empty (=false)
+GPU_BOOL := $(if $(GPU),$(GPU),false)
+PROV := ## empty (=false) or true
+NXF_PROFILE := $(if $(PROV),"-profile with_prov","")
+
+# Build parameters
+MODEL_SUFFIX := $(if $(GPU),,-cpu)
 IMAGE_TAG := $(MODEL)$(MODEL_SUFFIX):latest
 DOCKERFILE := containers/$(MODEL)/$(MODEL)$(MODEL_SUFFIX).Dockerfile
-PROV := ## empty or true
-NXF_PROFILE := $(if $(PROV),"with_prov","")$(MODEL)$(if $(CPU),_cpu,)
-TASK := inference
 
 # File parameters
 DATASET = test
@@ -71,6 +74,7 @@ $(DATA_DIR)/filtered_ms_adata.h5ad:
 	@python3 -m gdown 1casFhq4InuBNhJLMnGebzkRXM2UTTeQG --quiet -O $@
 
 # Model files - make will skip if they exist
+# scgpt
 $(MODEL_DIR)/scgpt/best_model.pt:
 	@echo "Downloading best_model.pt"
 	@mkdir -p $(MODEL_DIR)
@@ -86,11 +90,11 @@ $(MODEL_DIR)/scgpt/args.json:
 	@mkdir -p $(MODEL_DIR)
 	@python3 -m gdown 1GTQXIwa4yzbRZlarGgHkmC9k8hD6x1hA --quiet -O $@
 
-
+# cancerf
 external/cancerf/assets/model/best_model.pt:
 	@echo "Downloading model.pt"
 	@mkdir -p external/cancerf/assets/model
-# 	@python3 -m gdown 1PsOOAXioZ7twJZiIhvxg5c5HD18fAtYt --quiet -O $@
+#TODO 	@python3 -m gdown 1PsOOAXioZ7twJZiIhvxg5c5HD18fAtYt --quiet -O $@
 
 # Convenience targets that depend on the files
 download-data: $(DATA_FILES) ## Download the data
@@ -105,22 +109,13 @@ image: $(DOCKERFILE) ## Build the Docker image
 
 ### RUN
 run: download-data download-model ## Run the Nextflow pipeline
-	@nextflow run . --model $(MODEL) --task $(TASK) $(if $(CPU),,--gpu true)
-
-# scgpt: download-data download-model ## Run the Nextflow pipeline
-# 	@nextflow run . -profile scgpt
-
-# cancerf: download-data download-model ## Run the Nextflow pipeline
-# 	@nextflow run . -profile cancerf
-
-# cancerf-cpu: download-data download-model ## Run the Nextflow pipeline
-# 	@nextflow run . -profile cancerf_cpu
+	@nextflow run . --model $(MODEL) --task $(TASK) --gpu $(GPU_BOOL) $(NXF_PROFILE)
 
 cancerf-cpu-test: #download-data download-model ## Run the Nextflow pipeline
-	@nextflow run . --model $(MODEL) --task $(TASK) $(if $(CPU),,--gpu true) -stub-run
+	@nextflow run . --model $(MODEL) --task $(TASK) --gpu $(GPU_BOOL) $(NXF_PROFILE) -stub-run
 
 test: ## Run with test parameters
-	@nextflow run . --model $(MODEL) --task $(TASK) $(if $(CPU),,--gpu true) -stub-run
+	@nextflow run . --model $(MODEL) --task $(TASK) --gpu $(GPU_BOOL) $(NXF_PROFILE) -stub-run
 
 
 ### MAINTENANCE
