@@ -13,6 +13,7 @@ Monorepo layout for scGPT, Cancer Foundation, and Nextflow pipelines.
     - [Instructions for setup and test workflow](#instructions-for-setup-and-test-workflow)
 - [Running supported workflows](#running-supported-workflows)
     - [Models and tasks](#models-and-tasks)
+    - [Datasets](#datasets)
 - [Running customised workflows](#running-customised-workflows)
     - [Custom workflow configuration](#custom-workflow-configuration)
     - [Custom dataset](#custom-dataset)
@@ -114,8 +115,10 @@ File `nextflow.config` is heavily commented and provides further instructions on
 > When changing the directory `outputDir`, where workflow outputs are published, make sure you do not change it via the `nextflow run . -output-dir` in command line. Change it instead in `nextflow.config` by defining both variables `outputDir` and `params.outputDir` as instructed in the comments in the config file. If these folders are defined after the `with_prov` profile is defined, then provenance may not work correctly.
 
 
-<!-- ### Custom dataset -->
+### Custom dataset
 
+> [!WARNING]
+> This is #TODO
 
 ### Custom container
 1. Create your Dockerfile in the appropriate subfolder in `container` folder.
