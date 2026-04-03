@@ -71,14 +71,16 @@ Monorepo layout for scGPT, Cancer Foundation, and Nextflow pipelines.
 This repo supports running the following models and tasks:
 | Model | Tasks |
 | --- | ----------- |
-| [CancerFoundation][] | task1 |
-| [scGPT][] | task1<br>task2 |
+| [CancerFoundation](#cancerf) | task1 |
+| [scGPT](#scgpt) | task1<br>task2 |
 
 #### References
-[CancerFoundation]: CancerFoundation
-    #TODO add reference
-[scGPT]: scGPT
-    #TODO add reference
+
+- <span id="cancerf"></span>CancerFoundation
+    > #TODO add reference
+
+- <span id="scgpt"></span>scGPT
+    > #TODO add reference
 
 
 ## Running a customised workflow
