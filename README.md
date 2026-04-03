@@ -1,5 +1,8 @@
 # bh2025_scllms_p30
 
+> [!WARNING]
+> #TODO This description needs to be revised
+
 Monorepo layout for scGPT, Cancer Foundation, and Nextflow pipelines.
 
 ## Table of contents
@@ -8,7 +11,9 @@ Monorepo layout for scGPT, Cancer Foundation, and Nextflow pipelines.
 - [Setup](#setup)
     - [Prerequisites](#prerequisites)
     - [Instructions for setup and test workflow](#instructions-for-setup-and-test-workflow)
-- [Running a customised workflow](#running-a-customised-workflow)
+- [Running supported workflows](#running-supported-workflows)
+    - [Models and tasks](#models-and-tasks)
+- [Running customised workflows](#running-customised-workflows)
     - [Custom workflow configuration](#custom-workflow-configuration)
     - [Custom dataset](#custom-dataset)
     - [Custom container](#custom-workflow-configuration)
@@ -40,7 +45,7 @@ Monorepo layout for scGPT, Cancer Foundation, and Nextflow pipelines.
 - Docker
 - Nextflow (version 25.10.4)
 - Python
-- gdown (Python package)
+- gdown (Python package) in an actived Python virtual environment
 
 
 ### Instructions for setup and test workflow
@@ -49,15 +54,16 @@ Monorepo layout for scGPT, Cancer Foundation, and Nextflow pipelines.
     ```
     git submodule update --init --recursive
     ```
-3. Check that you have all the prerequisites installed.
+3. Activate a Python virtual environment with `gdown` installed.
+4. Check that you have all the prerequisites installed.
     ```
     make prereq
     ```
-4. Build containers needed for running a specific model.
+5. Build containers needed for running a specific model.
     ```
     make build MODEL=<model> GPU=<true if gpu needed, otherwise delete this argument>
     ```
-5. Run test workflow for a specific model and task.
+6. Run test workflow for a specific model and task.
     ```
     make run MODEL=<model> TASK=<task> GPU=<true if gpu needed, otherwise delete this argument>
     ```
@@ -83,7 +89,12 @@ This repo supports running the following models and tasks:
     > #TODO add reference
 
 
-## Running a customised workflow
+### Datasets
+
+> [!WARNING]
+> This is #TODO
+
+## Running customised workflows
 
 If you want to run your a customised workflow, we recommend not using the `make` commands, but running your own commands directly.
 
