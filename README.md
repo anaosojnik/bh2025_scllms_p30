@@ -22,6 +22,9 @@ Monorepo layout for scGPT, Cancer Foundation, and Nextflow pipelines.
 
 ## Structure
 
+> [!NOTE]
+> `pipelines` directory still exists, but is deprecated in this version. The majority of relevant files have been moved from the `pipelines` directory into the new structure.
+
 - `Makefile`: contains commands for setup, running the workflow and cleaning up
 - `main.nf`: **core workflow script**, which calls subworkflows, i.e. for each model there is a separate subworkflow script that gets called
 - `nextflow.config`: **core Nextflow configuration file**, defines key input parameters and directory structure
@@ -37,6 +40,7 @@ Monorepo layout for scGPT, Cancer Foundation, and Nextflow pipelines.
     - `cancerf`: original Cancer Foundation repo as a git submodule
 - `assets`: any extra files that may be used by models, e.g. model weight files (see the file download section of the `Makefile`)
 - `containers`: files that specify container environments, i.e. Dockerfiles, split by model into subdirectories; `docker-compose.yml` contains instructions for building and running the different containers, but one can also build them with `make build <...args>` (see `Makefile`)
+- `data`: directory with all the **experimental datasets**, every dataset should be in its own subfolder
 - `outputs`: directory where **results** are published according to the current configuration in `nextflow.config`; results are split by model in subdirectories
 - `.work`: Nextflow working directory with all run working files and outputs before some files are published to `outputs`
 
