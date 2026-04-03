@@ -56,10 +56,11 @@ workflow CANCERF {
     // println("Workflow parameters loaded from file:")
     // println(config)
 
-    // Run workflow
+    // Parse CLI arguments
     cliArgs = parseAsCmdArgs(params.workflow)
     println(cliArgs)
-    
+
+    // Run task
     if (params.task == "embed") {
         result = EMBED(cliArgs)
         results = result.embeddings.combine(result.umap.ifEmpty([null]))

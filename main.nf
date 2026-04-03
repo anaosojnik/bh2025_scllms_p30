@@ -33,7 +33,8 @@ workflow {
 
     // results.flatten().view { v -> "${v}  (${v?.getClass()})" }
 
-    // Remove optional results, which are null
+    // Flatten results and
+    // remove optional results, which output as null
     results = results.flatten().filter { it != null } 
 
     println("results:")
@@ -43,6 +44,7 @@ workflow {
     results = results
 }
 
+// Define how results are published
 output {
     results {
         path "${params.resultsSubdir}"
