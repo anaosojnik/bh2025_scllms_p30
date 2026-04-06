@@ -69,7 +69,7 @@ workflow SCGPT {
 
     main:
     // Run workflow
-    scriptArgs = parseAsCmdArgs(params.workflow.script)
+    scriptArgs = parseAsCmdArgs(params.workflowParams.script)
     println(scriptArgs)
 
     if (params.task == "inference") {

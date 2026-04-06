@@ -14,13 +14,13 @@ Monorepo layout for scGPT, Cancer Foundation, and Nextflow pipelines.
     - [Workflow structure](#workflow-structure)
         - [Entry workflow](#entry-workflow)
         - [Model workflows](#model-workflows)
-        - [Task processes](#task-processes)
+        - [Workflow processes](#workflow-processes)
     - [File structure](#file-structure)
 - [Setup](#setup)
     - [Prerequisites](#prerequisites)
     - [Instructions for setup and test workflow](#instructions-for-setup-and-test-workflow)
 - [Running supported workflows](#running-supported-workflows)
-    - [Models and tasks](#models-and-tasks)
+    - [Models, workflows and tasks](#models-workflow-types-and-tasks)
     - [Datasets](#datasets)
 - [Running customised workflows](#running-customised-workflows)
     - [Custom workflow configuration](#custom-workflow-configuration)
@@ -41,15 +41,15 @@ This workflow also avoids setting parameters inside any of the `.nf` files, and 
 
 #### Entry workflow
 Our entry workflow is in file `main.nf`. It executes the following:
-1. Checks if required configuration parameters are provided, these are `model` and `task` (#TODO `dataset`?).
+1. Checks if required configuration parameters are provided, these are `model` and `workflow` (#TODO `dataset`?).
 
     These parameters must be provided to the workflow, for example 
     ```
-    nextflow run . --model <model> --task <task>
+    nextflow run . --model <model> --workflow <workflow>
     ```
-    This is already taken care of if using `make` commands (see `Makefile`), but `MODEL` and `TASK` may also have to be provided to the `make run` command, if not running the default workflow, for example as below.
+    This is already taken care of if using `make` commands (see `Makefile`), but `MODEL` and `WORKFLOW` may also have to be provided to the `make run` command, if not running the default workflow, for example as below.
     ```
-    make run MODEL=<model> TASK=<task>
+    make run MODEL=<model> WORKFLOW=<workflow>
     ```
 
 2. Checks if the output directory, where outputs from the entry workflow are published, exists
@@ -75,17 +75,17 @@ Model workflows can be found at `workflows/<model>/<model>.nf`.
 They execute the following:
 1. Parse as a string the command line arguments needed for running the Python script.
 
-    These arguments are in the `params.workflow` parameter and are defined in task-specific configuration files (see [Custom workflow configuration](#custom-workflow-configuration-warning)).
+    These arguments are in the `params.workflowParams` parameter and are defined in workflow-specific configuration files (see [Custom workflow configuration](#custom-workflow-configuration-warning)).
 
-2. Depending on the `task` configuration parameter, run the specific task process (see [Task processes](#task-processes)) with the parsed CLI arguments as string input.
+2. Depending on the `workflow` configuration parameter, run the specific workflow process (see [Workflow processes](#workflow-processes)) with the parsed CLI arguments as string input.
 
 3. Cast output file paths from the process to the correct format for processing in the entry workflow (see `CANCERF` workflow in `workflows/cancerf/cancerf.nf` as example).
 
 4. Emit output file paths, i.e. pass to the parent workflow script.
 
 
-#### Task processes
-At the moment, each task is run with a single Python script. Therefore, we define **one process per task**.
+#### Workflow processes
+At the moment, each workflow is run with a single Python script. Therefore, we define **one process per workflow type**. For example, workflow types are `embded` or `finetune`.
 
 All processes are for now defined in the same file as the model workflow script from which they are called, this is in the `workflows/<model>/<model>.nf` file. Please see `EMBED` process in `workflows/cancerf/cancerf.nf` as an example of how processes should be written.
 
@@ -119,7 +119,7 @@ Processes are defined by the following 4 components:
 - `main.nf`: **main (entry) workflow script**, which calls subworkflows, i.e. for each model there is a separate subworkflow script that gets called
 - `nextflow.config`: **main Nextflow configuration file**, defines key input parameters and directory structure
 - `workflows`: Nextflow **subworkflows**, split by model
-- `configs`: Nextflow additional configuration files split by model and by task
+- `configs`: Nextflow additional configuration files split by model and by workflow type
 - `modules`: shared Groovy/Nextflow code, used by all workflows and subworkflows, e.g. `modules/utils.nf`
 - `bin`: **all our Python code**, split by model or according to whether the code is shared between all models
     - `shared`: folder added to PYTHONPATH for all models
@@ -160,22 +160,22 @@ Processes are defined by the following 4 components:
     ```
     make build MODEL=<model> GPU=<true if gpu needed, otherwise delete this argument>
     ```
-6. Run test workflow for a specific model and task.
+6. Run test workflow for a specific model and workflow type.
     ```
-    make run MODEL=<model> TASK=<task> GPU=<true if gpu needed, otherwise delete this argument>
+    make run MODEL=<model> WORKFLOW=<workflow> GPU=<true if gpu needed, otherwise delete this argument>
     ```
 
 ## Running supported workflows
-### Models and tasks
+### Models, workflow types and tasks
 
 > [!WARNING]
 > This is #TODO
 
-This repo supports running the following models and tasks:
-| Model | Tasks |
-| --- | ----------- |
-| [CancerFoundation](#cancerf) | task1 |
-| [scGPT](#scgpt) | task1<br>task2 |
+This repo supports running the following models, workflow types and tasks:
+| Model | Workflow types | Tasks |
+| --- | ----------- | ----- |
+| [CancerFoundation](#cancerf) | embed<br> | task1 |
+| [scGPT](#scgpt) | embed<br>finetune | task1<br>task2 |
 
 #### References
 
@@ -199,9 +199,10 @@ If you want to run your a customised workflow, we recommend not using the `make`
 To customise your workflow configuration, there are three types of configuration files you can edit:
 - `nextflow.config`: core configuration,
 - `workflows/<model>/<model>.config`: model-specific configuration, and
-- `configs/<model>/<task>.config`: task-specific configuration.
+- `configs/<model>/<workflow>.config`: workflow-type-specific configuration.
+> #TODO We probably also need task-specific configuration. To think about and implement
 
-By definition in this repo, the types of parameters in each of these files are disjoint, i.e. do not overlap. However, it is worth noting that generally model-specific configuration overrides the core configuration, while task-specific configuration overrides the other two.
+By definition in this repo, the types of parameters in each of these files are disjoint, i.e. do not overlap. However, it is worth noting that generally model-specific configuration overrides the core configuration, while workflow-specific configuration overrides the other two.
 
 You can also add your own configuration file in the `nextflow -c configs/<my-config>.config run .` command, which overrides all of the other configurations.
 
@@ -230,7 +231,7 @@ File `nextflow.config` is heavily commented and provides further instructions on
 
 4. Run your workflow as usual.
     ```
-    nextflow run . --model <model> --task <task> --gpu <true/false> -profile <profiles-comma-separated>
+    nextflow run . --model <model> --workflow <workflow> --gpu <true/false> -profile <profiles-comma-separated>
     ```
 
 ### Container system other than Docker

@@ -57,7 +57,7 @@ workflow CANCERF {
     // println(config)
 
     // Parse CLI arguments
-    cliArgs = parseAsCmdArgs(params.workflow)
+    cliArgs = parseAsCmdArgs(params.workflowParams)
     println(cliArgs)
 
     // Run task

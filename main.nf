@@ -7,12 +7,12 @@ workflow {
 
     main:
 
-    // Check if model and task defined
+    // Check if model and workflow defined
     if( !params.model ) {
         error("Parameter --model is required. Re-run workflow with a model-specific profile.")
     }
-    if( !params.task ) {
-        error("Parameter --task is required. Re-run workflow by adding a task parameter.")
+    if( !params.workflow ) {
+        error("Parameter --workflow is required. Re-run workflow by adding a workflow parameter.")
     }
 
     // Check if output directory exists, otherwise error

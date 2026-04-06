@@ -3,7 +3,7 @@
 # Default parameters (can be overridden)
 # Run parameters
 MODEL := cancerf ## which model to run
-TASK := embed ## which task to run
+WORKFLOW := embed ## which task to run
 GPU := ## whether to run with gpu - true or empty (=false)
 GPU_BOOL := $(if $(GPU),$(GPU),false)
 PROV := ## whether to run with provenance - empty (=false) or true
@@ -37,13 +37,13 @@ help: ## Show this help message
 	@echo ""
 	@echo "Parameters (can be overridden):"
 	@echo "  MODEL=$(MODEL)"
-	@echo "  TASK=$(TASK)"
+	@echo "  WORKFLOW=$(WORKFLOW)"
 	@echo "  GPU=$(GPU)"
 	@echo "  PROV=$(PROV)"
 	@echo "  DATASET=$(DATASET)"
 	@echo ""
 	@echo "Examples:"
-	@echo "  make run MODEL=cancerf TASK=embed GPU=true"
+	@echo "  make run MODEL=cancerf WORKFLOW=embed GPU=true"
 
 ### SETUP
 # Verify the prerequisites
@@ -133,17 +133,17 @@ image: $(DOCKERFILE) ## Build the Docker image
 ### RUN
 # full pipelines
 run: download-data download-model ## Run Nextflow pipeline with any parameters
-	@nextflow run . --model $(MODEL) --task $(TASK) --gpu $(GPU_BOOL) $(NXF_PROFILE)
+	@nextflow run . --model $(MODEL) --task $(WORKFLOW) --gpu $(GPU_BOOL) $(NXF_PROFILE)
 
 scgpt: ## download data and run scgpt finetuning on GPU
-	$(MAKE) run MODEL=scgpt TASK=finetune GPU=true
+	$(MAKE) run MODEL=scgpt WORKFLOW=finetune GPU=true
 
 cancerf: ## download data and run cancerf embedding on GPU
-	$(MAKE) run MODEL=cancerf TASK=embed GPU=true
+	$(MAKE) run MODEL=cancerf WORKFLOW=embed GPU=true
 
 # test pipelines (-stub-run)
 test: ## Run Nextflow test pipeline with any parameters (i.e. Nextflow stub run)
-	@nextflow run . --model $(MODEL) --task $(TASK) --gpu $(GPU_BOOL) $(NXF_PROFILE) -stub-run
+	@nextflow run . --model $(MODEL) --task $(WORKFLOW) --gpu $(GPU_BOOL) $(NXF_PROFILE) -stub-run
 
 cancerf-cpu-test: #download-data download-model ## Run the cancerf test pipeline
 	@nextflow run . --model cancerf --task embed --gpu false $(NXF_PROFILE) -stub-run
