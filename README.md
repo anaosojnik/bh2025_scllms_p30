@@ -97,7 +97,7 @@ Processes are defined by the following 4 components:
 
 - `output`: paths of output files, can be defined as
     - paths of all generated files `path("*")`, output as a list, or
-    - specific paths `path(${params.specific_output_path})` as in `EMBED`; in the case of specific paths, paths must be combined together (see `CANCERF`), or if some specifically-defined output files are optional, set `optional: true` in their definition (see `EMBED`)
+    - specific paths `path(${params.<specific-output-path>})` as in `EMBED`; in the case of specific paths, paths must be combined together (see `CANCERF`), or if some specifically-defined output files are optional, set `optional: true` in their definition (see `EMBED`)
 
 - `script`: `bash` script to be run when the process is called
 
